@@ -104,7 +104,7 @@ router.get('/text', async (req, res) => {
   try {
     const { path } = req.query;
     const fileTitle = getTitle(path);
-    const isFileExist = isItemExist(path);
+    const isFileExist = await isItemExist(path);
 
     if (isFileExist) {
       const readStream = createReadStream(path);
@@ -125,7 +125,7 @@ router.get('/text', async (req, res) => {
 router.post('/text', async (req, res) => {
   try {
     const body = req.body;
-    const isFileExist = isItemExist(body.filePath);
+    const isFileExist = await isItemExist(body.filePath);
 
     if (isFileExist) {
       await fs.writeFile(body.filePath, body.data);
@@ -143,7 +143,7 @@ router.get('/getMediaFile', async (req, res) => {
   try {
     const { path } = req.query;
     const fileTitle = getTitle(path);
-    const isFileExist = isItemExist(path);
+    const isFileExist = await isItemExist(path);
 
     if (isFileExist) {
       const response = { fileTitle, id: uuidv4(), data: '' };
