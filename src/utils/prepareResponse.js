@@ -1,16 +1,19 @@
-const filterFolderItems = require('./filterFolderItems');
-const getFolderItems = require('./getFolderItems');
+const fs = require('fs/promises');
+const { v4: uuidv4 } = require('uuid');
 const getTitle = require('./getTitle');
 const prepareItems = require('./prepareItems');
-const prepareResponseData = require('./prepareResponseData');
 
 const prepareResponse = async (path) => {
-  const items = await getFolderItems(path);
-  const formattedItems = prepareItems(items, path);
-  const filteredItems = filterFolderItems(formattedItems);
+  const itemsList = await fs.readdir(path, { withFileTypes: true });
+  const formattedItems = prepareItems(itemsList, path);
+  const items = formattedItems.filter((item) => !item.name.startsWith('.'));
   const folderTitle = getTitle(path);
 
-  return prepareResponseData(filteredItems, folderTitle);
+  return {
+    id: uuidv4(),
+    folderTitle,
+    items,
+  };
 };
 
 module.exports = prepareResponse;
